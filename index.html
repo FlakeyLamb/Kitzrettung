@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rehkitzrettung Heuberg e.V.</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #12281a 0%, #1e3a27 50%, #102216 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            width: 100%;
+            padding: 15px 40px;
+            background: rgba(18, 40, 26, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(74, 222, 128, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .brand-name {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+        nav ul { display: flex; list-style: none; gap: 25px; }
+        nav ul li a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover { color: #4ade80; }
+
+        /* Hamburger Button (standardmäßig versteckt auf PC) */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #4ade80;
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Overlay für den Bereich außerhalb des Menüs */
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* --- Hero-Bereich --- */
+        .hero-section {
+            height: 90vh;
+            padding-top: 80px;
+            background: linear-gradient(rgba(18, 40, 26, 0.4), rgba(18, 40, 26, 0.75)), 
+                        url('rehkitz.jpg') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-left: 20px;
+            padding-right: 20px;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+            letter-spacing: 0.5px;
+        }
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #f1f5f9;
+            max-width: 650px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+            line-height: 1.5;
+        }
+
+        /* --- Infobereich --- */
+        .info-section {
+            max-width: 850px;
+            margin: 60px 8% 60px auto;
+            padding: 0 20px;
+            animation: fadeInUp 1.2s ease-out;
+        }
+        .info-card {
+            background: rgba(30, 58, 39, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 222, 128, 0.35);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+        .info-card h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+        .info-card p {
+            font-size: 1.05rem;
+            color: #e2e8f0;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+        .info-card ul {
+            margin: 15px 0 15px 20px;
+            color: #cbd5e1;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+        .info-card ul li { margin-bottom: 8px; }
+        .info-card ul li strong { color: #4ade80; }
+
+        /* --- Bilder-Galerie / Slider --- */
+        .gallery-section {
+            max-width: 850px;
+            margin: 40px auto 40px 8%;
+            padding: 0 20px;
+            animation: fadeInUp 1.4s ease-out;
+        }
+        .slider-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid rgba(74, 222, 128, 0.35);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            background: rgba(30, 58, 39, 0.75);
+        }
+        .slider-track {
+            display: flex;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+        }
+        .slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .slide img {
+            width: 100%;
+            height: clamp(300px, 50vh, 500px);
+            object-fit: cover;
+            display: block;
+        }
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(18, 40, 26, 0.75);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.4);
+            font-size: 1.8rem;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 50%;
+            user-select: none;
+            transition: background 0.3s ease, transform 0.3s ease, color 0.3s ease;
+            backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+        .slider-btn:hover {
+            background: rgba(74, 222, 128, 0.9);
+            color: #12281a;
+            transform: translateY(-50%) scale(1.1);
+        }
+        .prev-btn { left: 15px; }
+        .next-btn { right: 15px; }
+
+        /* --- Footer --- */
+        footer {
+            width: 100%;
+            background: rgba(18, 40, 26, 0.95);
+            border-top: 1px solid rgba(74, 222, 128, 0.3);
+            padding: 30px 20px;
+            text-align: center;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+        footer a {
+            color: #4ade80;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        footer a:hover { color: #ffffff; }
+
+        /* --- Mobile-Anpassungen & Seitenleiste --- */
+        @media (max-width: 800px) {
+            header {
+                padding: 15px 20px;
+            }
+            
+            /* Zeige den Button oben links auf Smartphones */
+            .menu-toggle {
+                display: block;
+            }
+
+            /* Seitliche Leiste auf dem Smartphone */
+            nav {
+                position: fixed;
+                top: 0;
+                left: -260px; /* Versteckt das Menü links außerhalb des Bildschirms */
+                width: 260px;
+                height: 100vh;
+                background: rgba(16, 34, 22, 0.98);
+                backdrop-filter: blur(15px);
+                border-right: 1px solid rgba(74, 222, 128, 0.3);
+                padding: 80px 20px 30px 20px;
+                transition: left 0.3s ease-in-out;
+                z-index: 1000;
+            }
+
+            /* Fährt die Leiste rein, wenn aktiv */
+            nav.active {
+                left: 0;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav ul li a {
+                font-size: 1.1rem;
+                display: block;
+            }
+
+            .hero-title { font-size: 2.1rem; }
+            .hero-subtitle { font-size: 1rem; }
+
+            .info-section, .gallery-section {
+                margin: 30px auto;
+                padding: 0 15px;
+                width: 100%;
+            }
+
+            .info-card { padding: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Overlay für Klick außerhalb des Menüs -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
+    <header>
+        <!-- Button oben links für das Handy-Menü -->
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        
+        <div class="brand-name">Rehkitzrettung Heuberg e.V.</div>
+        
+        <nav id="mobileNav">
+            <ul>
+                <li><a href="index.html" style="color: #4ade80;">Startseite</a></li>
+                <li><a href="ablauf.html">Rettungsablauf</a></li>
+                <li><a href="termine.html">Termine</a></li>
+                <li><a href="ueber-uns.html">Über uns</a></li>
+                <li><a href="kontakt.html">Kontakt</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <h1 class="hero-title">Wir retten Rehkitze</h1>
+        <p class="hero-subtitle">Mit Wärmebilddrohnen und ehrenamtlichen Helfern schützen wir junge Wildtiere vor dem sicheren Mähtod im hohen Gras.</p>
+    </section>
+
+    <!-- Infobereich -->
+    <section class="info-section">
+        <div class="info-card">
+            <h2>Warum müssen Rehkitze gerettet werden?</h2>
+            <p>Im Frühjahr (Mai bis Juni) bringen Ricken ihre Kitze gut geschützt im hohen Wiesen- und Feldgras zur Welt. Was in der Natur als perfekter Schutz vor Fressfeinden dient, wird bei der landwirtschaftlichen Mahd zur tödlichen Falle.</p>
+            
+            <ul>
+                <li><strong>Kein Fluchtinstinkt:</strong> In den ersten drei Lebenswochen haben neugeborene Kitze keinen Fluchtreflex. Bei Gefahr duckst sie sich instinktiv flach an den Boden.</li>
+                <li><strong>Unsichtbar im Wiesenaufwuchs:</strong> Selbst aus der Fahrerkabine moderner Traktoren sind die gut getarnten Tiere im hohen Gras unmöglich rechtzeitig zu erkennen.</li>
+                <li><strong>Massive Verlustzahlen:</strong> Jedes Jahr fallen in Deutschland schätzungsweise 50.000 bis 100.000 Rehkitze den schnellen Mähwerken zum Opfer.</li>
+                <li><strong>Tierschutz & Recht:</strong> Nach dem Tierschutzgesetz (§ 1) darf keinem Tier ohne vernünftigen Grund Schmerz oder Schadenzugefügt werden. Landwirte und Jäger arbeiten daher eng zusammen.</li>
+            </ul>
+
+            <p>Mit unserer Drohnensuche scannen wir die Flächen vor dem Mähen flächendeckend mit Wärmebildkameras ab und bringen gefundene Tiere sicher aus der Gefahrenzone.</p>
+        </div>
+    </section>
+
+    <!-- Galerie / Slider Bereich -->
+    <section class="gallery-section">
+        <div class="slider-container">
+            <div class="slider-track" id="sliderTrack">
+                <div class="slide">
+                    <img src="rehkitz.jpg" alt="Rehkitz im Gras">
+                </div>
+                <div class="slide">
+                    <img src="drohne.jpg" alt="Wärmebilddrohne im Einsatz">
+                </div>
+                <div class="slide">
+                    <img src="rettung.jpg" alt="Gezielte Rehkitzrettung">
+                </div>
+            </div>
+
+            <button class="slider-btn prev-btn" onclick="moveSlide(-1)">&#10094;</button>
+            <button class="slider-btn next-btn" onclick="moveSlide(1)">&#10095;</button>
+        </div>
+    </section>
+
+    <footer>
+        <p style="margin-bottom: 10px;">&copy; 2026 Rehkitzrettung Heuberg e.V. – Alle Rechte vorbehalten.</p>
+        <p>
+            <a href="kontakt.html#impressum">Impressum</a> | 
+            <a href="kontakt.html#datenschutz">Datenschutz</a> | 
+            <a href="kontakt.html#kontakt">Kontakt</a>
+        </p>
+    </footer>
+
+    <!-- JavaScript für Slider und Handy-Menü -->
+    <script>
+        // Funktionen für die Seitenleiste und das Overlay auf dem Handy
+        function toggleMenu() {
+            const nav = document.getElementById('mobileNav');
+            const overlay = document.getElementById('menuOverlay');
+            nav.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            document.getElementById('mobileNav').classList.remove('active');
+            document.getElementById('menuOverlay').classList.remove('active');
+        }
+
+        // Funktion für den Bilderslider
+        let currentIndex = 0;
+
+        function moveSlide(direction) {
+            const track = document.getElementById('sliderTrack');
+            const slides = document.querySelectorAll('.slide');
+            const totalSlides = slides.length;
+
+            currentIndex += direction;
+
+            if (currentIndex >= totalSlides) {
+                currentIndex = 0;
+            }
+            if (currentIndex < 0) {
+                currentIndex = totalSlides - 1;
+            }
+
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termine – Rehkitzrettung Heuberg e.V.</title>
+    <!-- FontAwesome CDN für Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #12281a 0%, #1e3a27 50%, #102216 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            width: 100%;
+            padding: 15px 40px;
+            background: rgba(18, 40, 26, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(74, 222, 128, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .brand-name {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+        nav ul { display: flex; list-style: none; gap: 25px; }
+        nav ul li a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover { color: #4ade80; }
+
+        /* Hamburger Button */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #4ade80;
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Overlay für Mobilmenü */
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* --- Hauptbereich --- */
+        .content-section {
+            max-width: 900px;
+            margin: 120px auto 60px auto;
+            padding: 0 20px;
+        }
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-align: center;
+            letter-spacing: 0.5px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: #cbd5e1;
+            margin-bottom: 40px;
+            font-size: 1.05rem;
+            animation: fadeInUp 0.9s ease-out;
+        }
+
+        /* --- Kalender Styles --- */
+        .calendar-card {
+            background: rgba(30, 58, 39, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 222, 128, 0.35);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .calendar-month-year {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .cal-btn {
+            background: rgba(18, 40, 26, 0.8);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.4);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cal-btn:hover:not(:disabled) {
+            background: #4ade80;
+            color: #12281a;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Kalender Raster */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .weekday-header {
+            font-weight: 700;
+            color: #4ade80;
+            padding: 10px 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .day-cell {
+            background: rgba(18, 40, 26, 0.5);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+            border-radius: 10px;
+            min-height: 80px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .day-cell.other-month {
+            opacity: 0.3;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .day-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 4px;
+        }
+
+        .day-cell.today {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.12);
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.2) inset;
+        }
+
+        .day-cell.today .day-number {
+            color: #4ade80;
+            font-weight: 800;
+        }
+
+        /* Marker für eingetragene Termine */
+        .event-badge {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: #ffffff;
+            font-size: 0.72rem;
+            padding: 3px 6px;
+            border-radius: 5px;
+            margin-top: 4px;
+            width: 100%;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
+        /* Monatsliste / Hinweis-Box */
+        .event-list-box {
+            margin-top: 35px;
+            background: rgba(18, 40, 26, 0.6);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .event-list-box h3 {
+            color: #ffffff;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.95rem;
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-date-tag {
+            background: #4ade80;
+            color: #12281a;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        footer {
+            width: 100%;
+            background: rgba(18, 40, 26, 0.95);
+            border-top: 1px solid rgba(74, 222, 128, 0.3);
+            padding: 30px 20px;
+            text-align: center;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+        footer a {
+            color: #4ade80;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        footer a:hover { color: #ffffff; }
+
+        /* Responsive Mobile Layout */
+        @media (max-width: 800px) {
+            header { padding: 15px 20px; }
+            .menu-toggle { display: block; }
+            nav {
+                position: fixed;
+                top: 0;
+                left: -260px;
+                width: 260px;
+                height: 100vh;
+                background: rgba(16, 34, 22, 0.98);
+                backdrop-filter: blur(15px);
+                border-right: 1px solid rgba(74, 222, 128, 0.3);
+                padding: 80px 20px 30px 20px;
+                transition: left 0.3s ease-in-out;
+                z-index: 1000;
+            }
+            nav.active { left: 0; }
+            nav ul { flex-direction: column; gap: 20px; }
+            nav ul li a { font-size: 1.1rem; display: block; }
+        }
+
+        @media (max-width: 650px) {
+            .calendar-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .day-cell {
+                min-height: 55px;
+                padding: 4px;
+            }
+            .day-number { font-size: 0.8rem; }
+            .event-badge { font-size: 0.6rem; padding: 2px 4px; }
+            .weekday-header { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Overlay für Klick außerhalb des Menüs -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
+    <header>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <div class="brand-name">Rehkitzrettung Heuberg e.V.</div>
+        <nav id="mobileNav">
+            <ul>
+                <li><a href="index.html">Startseite</a></li>
+                <li><a href="ablauf.html">Rettungsablauf</a></li>
+                <li><a href="termine.html" style="color: #4ade80;">Termine</a></li>
+                <li><a href="ueber-uns.html">Über uns</a></li>
+                <li><a href="kontakt.html#kontakt">Kontakt</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="content-section">
+        <h1 class="section-title">Einsatz- & Terminkalender</h1>
+        <p class="section-subtitle">Übersicht über Schulungen, Jahreshauptversammlungen und Saison-Einsätze</p>
+
+        <div class="calendar-card">
+            <div class="calendar-header">
+                <!-- Navigation links: 6 Monate zurück / 1 Monat zurück -->
+                <div class="nav-group">
+                    <button class="cal-btn" onclick="changeMonth(-6)" title="6 Monate zurück">
+                        <i class="fa-solid fa-angles-left"></i> -6M
+                    </button>
+                    <button class="cal-btn" onclick="changeMonth(-1)" title="1 Monat zurück">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                </div>
+
+                <div class="calendar-month-year" id="monthYearDisplay">-- 2026</div>
+
+                <!-- Navigation rechts: 1 Monat vor / 6 Monate vor -->
+                <div class="nav-group">
+                    <button class="cal-btn" onclick="changeMonth(1)" title="1 Monat vor">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <button class="cal-btn" onclick="changeMonth(6)" title="6 Monate vor">
+                        +6M <i class="fa-solid fa-angles-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kalender Grid -->
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Wochentage -->
+                <div class="weekday-header">Mo</div>
+                <div class="weekday-header">Di</div>
+                <div class="weekday-header">Mi</div>
+                <div class="weekday-header">Do</div>
+                <div class="weekday-header">Fr</div>
+                <div class="weekday-header">Sa</div>
+                <div class="weekday-header">So</div>
+                
+                <!-- Tage werden per JS eingefügt -->
+            </div>
+
+            <!-- Liste der nächsten Termine im aktuellen Monat -->
+            <div class="event-list-box">
+                <h3><i class="fa-regular fa-calendar-check" style="color:#4ade80;"></i> Termine in diesem Monat</h3>
+                <div id="monthEventsList">
+                    <!-- Wird per JS befüllt -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p style="margin-bottom: 10px;">&copy; 2026 Rehkitzrettung Heuberg e.V. – Alle Rechte vorbehalten.</p>
+        <p>
+            <a href="kontakt.html#impressum">Impressum</a> | 
+            <a href="kontakt.html#datenschutz">Datenschutz</a> | 
+            <a href="kontakt.html#kontakt">Kontakt</a>
+        </p>
+    </footer>
+
+    <script>
+        // --- Mobile Menü Logik ---
+        function toggleMenu() {
+            document.getElementById('mobileNav').classList.toggle('active');
+            document.getElementById('menuOverlay').classList.toggle('active');
+        }
+
+        function closeMenu() {
+            document.getElementById('mobileNav').classList.remove('active');
+            document.getElementById('menuOverlay').classList.remove('active');
+        }
+
+        // --- Beispiel-Termine (Format: YYYY-MM-DD) ---
+        const eventsData = {
+            "2026-03-15": "Piloten-Schulung & Theorie",
+            "2026-04-10": "Jahreshauptversammlung",
+            "2026-05-02": "Testflüge & Drohnencheck",
+            "2026-05-15": "Start Kitzrettungs-Saison 2026",
+            "2026-06-01": "Frühschicht Einsatzübung",
+            "2026-06-20": "Haupt-Mähsaison Heuberg",
+            "2026-07-15": "Ende Mähsaison",
+            "2026-09-18": "Helfer-Dankesfest",
+            "2026-11-05": "Jahresrückblick & Hock"
+        };
+
+        const monthNames = [
+            "Januar", "Februar", "März", "April", "Mai", "Juni", 
+            "Juli", "August", "September", "Oktober", "November", "Dezember"
+        ];
+
+        // Fester Ankerpunkt: Heutiges Datum
+        const baseDate = new Date();
+        // Aktuell angezeigtes Datum
+        let currentDate = new Date();
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Titel anzeigen
+            document.getElementById('monthYearDisplay').innerText = `${monthNames[month]} ${year}`;
+
+            const grid = document.getElementById('calendarGrid');
+
+            // Entferne alte Tage (behalte die 7 Wochentagsköpfe)
+            while (grid.children.length > 7) {
+                grid.removeChild(grid.lastChild);
+            }
+
+            // Erster Tag des Monats & Anzahl Tage im Monat
+            const firstDayOfMonth = new Date(year, month, 1);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+
+            // Wochentag des 1. Tages ermitteln (0 = So, 1 = Mo ... wir brauchen 0 = Mo)
+            let startDay = firstDayOfMonth.getDay() - 1;
+            if (startDay === -1) startDay = 6;
+
+            const daysInMonth = lastDayOfMonth.getDate();
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+            // 1. Tage des vorherigen Monats einfügen (ausgegraut)
+            for (let i = startDay; i > 0; i--) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell other-month';
+                dayCell.innerHTML = `<span class="day-number">${prevMonthLastDay - i + 1}</span>`;
+                grid.appendChild(dayCell);
+            }
+
+            // Heute ermitteln für Highlighting
+            const today = new Date();
+            let activeMonthEvents = [];
+
+            // 2. Tage des aktuellen Monats einfügen
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell';
+
+                // Format YYYY-MM-DD
+                const mStr = String(month + 1).padStart(2, '0');
+                const dStr = String(day).padStart(2, '0');
+                const dateKey = `${year}-${mStr}-${dStr}`;
+
+                // Ist es heute?
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayCell.classList.add('today');
+                }
+
+                let cellContent = `<span class="day-number">${day}</span>`;
+
+                // Falls ein Termin vorliegt
+                if (eventsData[dateKey]) {
+                    const eventTitle = eventsData[dateKey];
+                    cellContent += `<div class="event-badge" title="${eventTitle}">${eventTitle}</div>`;
+                    activeMonthEvents.push({ dateStr: `${dStr}.${mStr}.${year}`, title: eventTitle });
+                }
+
+                dayCell.innerHTML = cellContent;
+                grid.appendChild(dayCell);
+            }
+
+            // 3. Auffüllen mit Tagen des nächsten Monats
+            const totalCells = startDay + daysInMonth;
+            const nextDays = (7 - (totalCells % 7)) % 7;
+            for (let j = 1; j <= nextDays; j++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell other-month';
+                dayCell.innerHTML = `<span class="day-number">${j}</span>`;
+                grid.appendChild(dayCell);
+            }
+
+            // Monatsliste unter dem Kalender befüllen
+            renderEventList(activeMonthEvents);
+
+            // Buttons aktivieren/deaktivieren je nach Limit (-6 / +6 Monate)
+            updateButtonStates();
+        }
+
+        function renderEventList(events) {
+            const listContainer = document.getElementById('monthEventsList');
+            if (events.length === 0) {
+                listContainer.innerHTML = '<p style="color: #94a3b8; font-size: 0.9rem;">Keine geplanten Termine in diesem Monat.</p>';
+            } else {
+                listContainer.innerHTML = events.map(e => `
+                    <div class="event-item">
+                        <span class="event-date-tag">${e.dateStr}</span>
+                        <span>${e.title}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Differenz in Monaten berechnen
+        function getMonthDifference(date1, date2) {
+            return (date1.getFullYear() - date2.getFullYear()) * 12 + (date1.getMonth() - date2.getMonth());
+        }
+
+        // Monate wechseln mit harter Begrenzung auf -6 bis +6 Monate vom aktuellen Monat
+        function changeMonth(delta) {
+            let targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta, 1);
+            let diff = getMonthDifference(targetDate, baseDate);
+
+            // Striktes Limit: Max. -6 und +6 Monate
+            if (diff > 6) {
+                targetDate = new Date(baseDate.getFullYear(), baseDate.getMonth() + 6, 1);
+            } else if (diff < -6) {
+                targetDate = new Date(baseDate.getFullYear(), baseDate.getMonth() - 6, 1);
+            }
+
+            currentDate = targetDate;
+            renderCalendar();
+        }
+
+        // Deaktiviert Buttons optisch und funktionell am Limit
+        function updateButtonStates() {
+            const diff = getMonthDifference(currentDate, baseDate);
+            const buttons = document.querySelectorAll('.cal-btn');
+
+            if (buttons.length >= 4) {
+                const atMinLimit = diff <= -6;
+                const atMaxLimit = diff >= 6;
+
+                buttons[0].disabled = atMinLimit; // -6M
+                buttons[1].disabled = atMinLimit; // -1M
+                buttons[2].disabled = atMaxLimit; // +1M
+                buttons[3].disabled = atMaxLimit; // +6M
+
+                buttons[0].style.opacity = atMinLimit ? "0.3" : "1";
+                buttons[1].style.opacity = atMinLimit ? "0.3" : "1";
+                buttons[2].style.opacity = atMaxLimit ? "0.3" : "1";
+                buttons[3].style.opacity = atMaxLimit ? "0.3" : "1";
+
+                buttons[0].style.cursor = atMinLimit ? "not-allowed" : "pointer";
+                buttons[1].style.cursor = atMinLimit ? "not-allowed" : "pointer";
+                buttons[2].style.cursor = atMaxLimit ? "not-allowed" : "pointer";
+                buttons[3].style.cursor = atMaxLimit ? "not-allowed" : "pointer";
+            }
+        }
+
+        // Kalender initialisieren
+        window.onload = renderCalendar;
+    </script>
+</body>
+</html>
