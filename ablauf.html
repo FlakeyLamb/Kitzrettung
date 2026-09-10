@@ -8,13 +8,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html {
+            scroll-behavior: smooth;
+            font-size: clamp(14px, 1.1vw, 18px);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #12281a 0%, #1e3a27 50%, #102216 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0e1e14 0%, #1a3523 50%, #0d1a11 100%);
             color: #f8fafc;
             min-height: 100vh;
             overflow-x: hidden;
         }
+
+        /* Animationen */
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -23,12 +31,26 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes glowPulse {
+            0% {
+                border-color: rgba(74, 222, 128, 0.5);
+                box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+            }
+            50% {
+                border-color: rgba(74, 222, 128, 0.9);
+                box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+            }
+            100% {
+                border-color: rgba(74, 222, 128, 0.5);
+                box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+            }
+        }
 
         /* --- Header & Navigation --- */
         header {
             width: 100%;
             padding: 15px 40px;
-            background: rgba(18, 40, 26, 0.85);
+            background: rgba(14, 30, 20, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(74, 222, 128, 0.3);
@@ -41,6 +63,7 @@
             z-index: 1000;
             animation: fadeInDown 0.8s ease-out;
         }
+
         .brand-name {
             font-size: 1rem;
             font-weight: 700;
@@ -48,17 +71,22 @@
             color: #ffffff;
             text-transform: uppercase;
         }
+
         nav ul { display: flex; list-style: none; gap: 25px; }
         nav ul li a {
             color: #e2e8f0;
             text-decoration: none;
             font-size: 0.95rem;
             font-weight: 500;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
         }
-        nav ul li a:hover { color: #4ade80; }
+        nav ul li a:hover { 
+            color: #4ade80; 
+            transform: translateY(-1px);
+        }
 
-        /* Hamburger Button (standardmäßig versteckt auf PC) */
+        /* Mobile Nav Toggle */
         .menu-toggle {
             display: none;
             background: none;
@@ -69,14 +97,11 @@
             z-index: 1001;
         }
 
-        /* Overlay für den Bereich außerhalb des Menüs */
         .menu-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(3px);
             -webkit-backdrop-filter: blur(3px);
@@ -85,151 +110,353 @@
             transition: opacity 0.3s ease-in-out;
         }
 
-        .menu-overlay.active {
-            display: block;
-            opacity: 1;
-        }
+        .menu-overlay.active { display: block; opacity: 1; }
 
-        /* --- Inhalt / Ablauf-Schritte --- */
+        /* --- Hauptbereich --- */
         .content-section {
-            max-width: 900px;
+            max-width: 1250px;
             margin: 120px auto 60px auto;
-            padding: 0 20px;
-        }
-        .section-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 10px;
-            text-align: center;
-            letter-spacing: 0.5px;
+            padding: 0 25px;
             animation: fadeInUp 0.8s ease-out;
         }
+
+        .section-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
         .section-subtitle {
             text-align: center;
-            color: #cbd5e1;
-            margin-bottom: 40px;
+            color: #94a3b8;
+            margin-bottom: 50px;
             font-size: 1.05rem;
-            animation: fadeInUp 0.9s ease-out;
         }
 
-        /* Timeline-Container */
-        .step-container {
+        /* --- STRENGTHENED LAYOUT STRUCTURE --- */
+        .flow-container {
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 40px;
+        }
+
+        /* PC-Modus: Oberer Bereich (Timeline links, Galerie rechts) */
+        .top-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 40px;
+            align-items: start;
+            position: relative; /* Begrenzt die Galerie exakt auf die Höhe der Timeline */
+        }
+
+        /* TIMELINE STYLES */
+        .timeline {
             position: relative;
         }
 
-        /* Vertikale Verbindungslinie im Hintergrund */
-        .step-container::before {
+        .timeline::before {
             content: '';
             position: absolute;
-            top: 30px;
-            bottom: 30px;
-            left: 37px;
+            top: 0;
+            bottom: 0;
+            left: 28px;
             width: 3px;
-            background: rgba(74, 222, 128, 0.3);
-            z-index: 0;
-        }
-
-        .step-card {
-            background: rgba(30, 58, 39, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(74, 222, 128, 0.35);
-            border-radius: 16px;
-            padding: 25px 30px;
-            display: flex;
-            align-items: flex-start;
-            gap: 25px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-            animation: fadeInUp 1s ease-out;
-            transition: all 0.3s ease-in-out;
-            position: relative;
+            background: linear-gradient(180deg, #4ade80 0%, rgba(74, 222, 128, 0.2) 100%);
             z-index: 1;
         }
 
-        /* LEUCHT-EFFEKT beim Hovern */
-        .step-card:hover {
-            transform: translateY(-5px);
-            background: rgba(30, 58, 39, 0.9);
-            border-color: #4ade80;
-            box-shadow: 0 0 25px rgba(74, 222, 128, 0.45), 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .step-icon-wrapper {
+        .timeline-step {
             position: relative;
-            flex-shrink: 0;
+            margin-bottom: 35px;
+            padding-left: 80px;
         }
 
-        /* Icon Container */
-        .step-icon {
-            background: linear-gradient(135deg, #16a34a, #15803d);
-            color: #ffffff;
-            font-size: 1.3rem;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
-            border: 2px solid rgba(74, 222, 128, 0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .timeline-step:last-child {
+            margin-bottom: 0;
         }
 
-        .step-card:hover .step-icon {
-            transform: scale(1.08);
-            box-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
-        }
-
-        /* Badge für die Schrittnummer */
-        .step-number-badge {
+        .step-number {
             position: absolute;
-            bottom: -5px;
-            right: -5px;
-            background: #4ade80;
-            color: #12281a;
-            font-size: 0.75rem;
-            font-weight: 800;
-            width: 22px;
-            height: 22px;
+            left: 0;
+            top: 0;
+            width: 58px;
+            height: 58px;
             border-radius: 50%;
+            background: #102216;
+            border: 2px solid #4ade80;
+            color: #4ade80;
             display: flex;
-            justify-content: center;
             align-items: center;
-            border: 2px solid #12281a;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            z-index: 2;
+            animation: glowPulse 3s infinite ease-in-out;
+            transition: transform 0.3s ease;
         }
 
-        .step-content h3 {
-            font-size: 1.3rem;
+        .timeline-step:hover .step-number {
+            transform: scale(1.1);
+            background: #4ade80;
+            color: #0e1e14;
+        }
+
+        .step-card {
+            background: rgba(30, 58, 39, 0.65);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 16px;
+            padding: 22px 28px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-3px);
+            border-color: #4ade80;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.25), 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .step-card h3 {
+            font-size: 1.25rem;
             color: #ffffff;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .step-content p { font-size: 0.98rem; color: #e2e8f0; line-height: 1.6; }
 
-        .warning-box {
-            background: rgba(239, 68, 68, 0.15);
-            border-left: 4px solid #ef4444;
-            border-radius: 6px;
-            padding: 12px 15px;
-            margin-top: 12px;
-            color: #fca5a5;
-            font-size: 0.9rem;
+        .step-card h3 i { color: #4ade80; font-size: 1.1rem; }
+
+        .step-card p {
+            font-size: 0.98rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .step-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
+        /* --- GALERIE BEREICH --- */
+        .gallery-container {
+            background: rgba(16, 34, 22, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 100px;
+            align-self: start;
+        }
+
+        .gallery-title {
+            color: #4ade80;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 140px;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover {
+            border-color: #4ade80;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, rgba(13, 26, 17, 0.9) 0%, transparent 100%);
+            padding: 8px 10px;
+            font-size: 0.75rem;
+            color: #e2e8f0;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        /* --- LIGHTBOX --- */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 12px;
+            border: 2px solid #4ade80;
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);
+            object-fit: contain;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .lightbox-modal.active .lightbox-content {
+            transform: scale(1);
+        }
+
+        .lightbox-caption {
+            margin-top: 15px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            color: #4ade80;
+            font-size: 2.5rem;
+            font-weight: 300;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .lightbox-close:hover {
+            color: #ffffff;
+            transform: scale(1.2);
+        }
+
+        /* --- REGELN & HINWEISE BOX (Full Width) --- */
+        .info-box {
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.25), rgba(16, 34, 22, 0.9));
+            border: 1px solid rgba(74, 222, 128, 0.5);
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
+        }
+
+        .info-box h3 {
+            color: #4ade80;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-box ul li {
+            position: relative;
+            padding-left: 28px;
+            color: #f8fafc;
+            font-size: 0.95rem;
             line-height: 1.5;
         }
-        .warning-box i {
-            margin-right: 6px;
+
+        .info-box ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #4ade80;
+            font-weight: 800;
+        }
+
+        /* CTA BUTTON */
+        .cta-container {
+            text-align: center;
+            width: 100%;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #4ade80;
+            color: #0d1a11;
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 15px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: #ffffff;
+            color: #0d1a11;
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
         }
 
         /* --- Footer --- */
         footer {
             width: 100%;
-            background: rgba(18, 40, 26, 0.95);
+            background: rgba(14, 30, 20, 0.95);
             border-top: 1px solid rgba(74, 222, 128, 0.3);
             padding: 30px 20px;
             text-align: center;
@@ -237,32 +464,39 @@
             font-size: 0.9rem;
             margin-top: 60px;
         }
-        footer a {
-            color: #4ade80;
-            text-decoration: none;
-            margin: 0 10px;
-            transition: color 0.3s ease;
-        }
+
+        footer a { color: #4ade80; text-decoration: none; margin: 0 10px; transition: color 0.3s ease; }
         footer a:hover { color: #ffffff; }
 
-        /* --- Mobile-Anpassungen & Seitenleiste --- */
-        @media (max-width: 800px) {
-            header {
-                padding: 15px 20px;
+        /* --- RESPONSIVE ANPASSUNGEN (MOBILGERÄTE) --- */
+        @media (max-width: 1024px) {
+            .top-layout {
+                grid-template-columns: 1fr;
+                gap: 30px;
             }
-            
-            /* Zeige den Button oben links auf Smartphones */
-            .menu-toggle {
-                display: block;
+            .gallery-container {
+                position: static;
+                order: 4; /* Galerie gaaanz nach unten auf Mobilgeräten */
             }
+            .info-box {
+                order: 2; /* Hinweisbox direkt unter der Timeline */
+            }
+            .cta-container {
+                order: 3; /* Anmelde-Button vor der Galerie */
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
 
-            /* Seitliche Leiste auf dem Smartphone */
+        @media (max-width: 800px) {
+            header { padding: 15px 20px; }
+            .menu-toggle { display: block; }
+
             nav {
                 position: fixed;
-                top: 0;
-                left: -260px; /* Versteckt das Menü links außerhalb des Bildschirms */
-                width: 260px;
-                height: 100vh;
+                top: 0; left: -260px;
+                width: 260px; height: 100vh;
                 background: rgba(16, 34, 22, 0.98);
                 backdrop-filter: blur(15px);
                 border-right: 1px solid rgba(74, 222, 128, 0.3);
@@ -271,37 +505,25 @@
                 z-index: 1000;
             }
 
-            /* Fährt die Leiste rein, wenn aktiv */
-            nav.active {
-                left: 0;
+            nav.active { left: 0; }
+            nav ul { flex-direction: column; gap: 20px; }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            nav ul {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            nav ul li a {
-                font-size: 1.1rem;
-                display: block;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .step-card { flex-direction: column; gap: 15px; }
-            .step-container::before { display: none; }
+            .timeline::before { left: 20px; }
+            .timeline-step { padding-left: 60px; }
+            .step-number { width: 42px; height: 42px; font-size: 1rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Overlay für Klick außerhalb des Menüs -->
     <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 
     <header>
-        <!-- Button oben links für das Handy-Menü -->
         <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-
         <div class="brand-name">Rehkitzrettung Heuberg e.V.</div>
         
         <nav id="mobileNav">
@@ -316,80 +538,130 @@
     </header>
 
     <main class="content-section">
-        <h1 class="section-title">Unser Ablauf</h1>
-        <p class="section-subtitle">Schritt für Schritt zu einer sicheren Mahd für Wildtiere</p>
+        <h1 class="section-title">Rettungsablauf</h1>
+        <p class="section-subtitle">So läuft ein Drohneneinsatz vor der Wiesenmahd ab</p>
         
-        <div class="step-container">
-            <div class="step-card">
-                <div class="step-icon-wrapper">
-                    <div class="step-icon">
-                        <i class="fa-solid fa-phone-volume"></i>
+        <div class="flow-container">
+            
+            <!-- OBERER BEREICH: TIMELINE & GALERIE -->
+            <div class="top-layout">
+                
+                <!-- LINKS: TIMELINE -->
+                <div class="timeline">
+                    
+                    <!-- SCHRITT 1 -->
+                    <div class="timeline-step">
+                        <div class="step-number">1</div>
+                        <div class="step-card">
+                            <span class="step-tag">Vorbereitung</span>
+                            <h3><i class="fa-solid fa-phone-volume"></i> Flächenmeldung & Absprache</h3>
+                            <p>Der Landwirt oder Jagdpächter meldet die zu mähende Wiesenfläche rechtzeitig (ideal am Vorabend bis ca. 18:00 Uhr) bei unserem Verein an. Wir stimmen die Flugroute und die Uhrzeit miteinander ab.</p>
+                        </div>
                     </div>
-                    <div class="step-number-badge">1</div>
+
+                    <!-- SCHRITT 2 -->
+                    <div class="timeline-step">
+                        <div class="step-number">2</div>
+                        <div class="step-card">
+                            <span class="step-tag">Früh morgens</span>
+                            <h3><i class="fa-solid fa-plane-fly"></i> Anfahrt & Thermik-Flug</h3>
+                            <p>Unser Pilot und das Bodenteam sind bei Sonnenaufgang (meist zwischen 4:30 und 6:00 Uhr) vor Ort. Die Wärmebilddrohne fliegt die Wiese lückenlos im Raster ab. Der Temperaturunterschied im kühlen Morgengras macht die Körperwärme der Kitze deutlich sichtbar.</p>
+                        </div>
+                    </div>
+
+                    <!-- SCHRITT 3 -->
+                    <div class="timeline-step">
+                        <div class="step-number">3</div>
+                        <div class="step-card">
+                            <span class="step-tag">Fund & Bergung</span>
+                            <h3><i class="fa-solid fa-hands-holding-child"></i> Kitzsicherung mit Grasbusch</h3>
+                            <p>Wird eine Wärmesignatur entdeckt, dirigiert der Pilot das Bodenteam per Funk direkt zur Fundstelle. Das Kitz wird vorsichtig ausschließlich mit frischem Gras umwickelt aufgenommen und in einer schattigen, belüfteten Kiste gesichert.</p>
+                        </div>
+                    </div>
+
+                    <!-- SCHRITT 4 -->
+                    <div class="timeline-step">
+                        <div class="step-number">4</div>
+                        <div class="step-card">
+                            <span class="step-tag">Mähfreigabe</span>
+                            <h3><i class="fa-solid fa-tractor"></i> Mahd der Wiese</h3>
+                            <p>Nach dem lückenlosen Abfliegen erhält der Landwirt die direkte Freigabe und kann gefahrlos mit den Mäharbeiten beginnen. Die gesichierten Kitze verbleiben während der Mahd am kühlen Wiesenrand.</p>
+                        </div>
+                    </div>
+
+                    <!-- SCHRITT 5 -->
+                    <div class="timeline-step">
+                        <div class="step-number">5</div>
+                        <div class="step-card">
+                            <span class="step-tag">Abschluss</span>
+                            <h3><i class="fa-solid fa-door-open"></i> Zusammenführung mit der Ricke</h3>
+                            <p>Sobald der Mähwerktraktor das Feld verlassen hat, werden die Transportkisten geöffnet. Das Kitz wird freigelassen – die Mutterziege (Ricke) findet ihr Kitz kurz darauf unverletzt wieder.</p>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="step-content">
-                    <h3>Meldung durch den Landwirt</h3>
-                    <p>Der Landwirt oder Jagdpächter meldet sich idealerweise 24 bis 48 Stunden vor Beginn der Mäharbeiten bei uns und teilt die Koordinaten bzw. Standorte der zu mähenden Flächen mit.</p>
+
+                <!-- RECHTS: EINSATZ-GALERIE (NUR auf Höhe der Timeline!) -->
+                <div class="gallery-container">
+                    <div class="gallery-title">
+                        <i class="fa-solid fa-images"></i> Eindrücke vom Einsatz
+                    </div>
+                    <div class="gallery-grid">
+                        
+                        <!-- Bild 1 -->
+                        <div class="gallery-item" onclick="openLightbox('drohnenstart.jpg', 'Drohnenstart bei Sonnenaufgang')">
+                            <img src="drohnenstart.jpg" alt="Drohnenstart">
+                            <div class="gallery-caption">Drohnenstart</div>
+                        </div>
+
+                        <!-- Bild 2 -->
+                        <div class="gallery-item" onclick="openLightbox('morgensuche.jpg', 'Morgentau-Suche im Wiesenfeld')">
+                            <img src="morgensuche.jpg" alt="Suche im Tau">
+                            <div class="gallery-caption">Morgentau-Suche</div>
+                        </div>
+
+                        <!-- Bild 3 -->
+                        <div class="gallery-item" onclick="openLightbox('kitz-gesichert.jpg', 'Sicher geborgenes Rehkitz im Gras')">
+                            <img src="kitz-gesichert.jpg" alt="Kitz gesichert">
+                            <div class="gallery-caption">Gerettetes Kitz</div>
+                        </div>
+
+                        <!-- Bild 4 -->
+                        <div class="gallery-item" onclick="openLightbox('maehfreigabe.jpg', 'Freigabe der Wiese für die Mahd')">
+                            <img src="maehfreigabe.jpg" alt="Sichere Wiese">
+                            <div class="gallery-caption">Mähfreigabe</div>
+                        </div>
+
+                    </div>
                 </div>
+
             </div>
 
-            <div class="step-card">
-                <div class="step-icon-wrapper">
-                    <div class="step-icon">
-                        <i class="fa-solid fa-clipboard-list"></i>
-                    </div>
-                    <div class="step-number-badge">2</div>
-                </div>
-                <div class="step-content">
-                    <h3>Einsatzplanung & Teamkoordination</h3>
-                    <p>Nach Eingabe der Daten erstellen wir Flugrouten und teilen die Teams ein. Die Flüge werden bevorzugt in den frühen Morgenstunden angesetzt, da Temperaturunterschiede die Wärmebildsuche optimal unterstützen.</p>
-                </div>
+            <!-- UNTEN: HINWEISBOX (Über die gesamte Breite!) -->
+            <div class="info-box">
+                <h3><i class="fa-solid fa-shield-halved"></i> Wichtige Verhaltensregeln</h3>
+                <ul>
+                    <li><b>Niemals mit bloßen Händen anfassen:</b> Menschlicher Geruch führt dazu, dass die Mutter das Kitz verstößt! Verwendet immer reichlich frisches Gras als Duftsperre.</li>
+                    <li><b>Kurze Reaktionszeiten:</b> Bitte informiert uns so früh wie möglich über geplante Mähtermine, damit wir Piloten und Helfer einteilen können.</li>
+                    <li><b>Kostenfreier Service:</b> Unsere Einsätze sind für Landwirte und Jäger ehrenamtlich und komplett kostenlos – wir freuen uns aber über jede Spende für Ausrüstung & Akkus!</li>
+                </ul>
             </div>
 
-            <div class="step-card">
-                <div class="step-icon-wrapper">
-                    <div class="step-icon">
-                        <!-- Eigenes SVG für die Drohne, da FontAwesome-Drohne kostenpflichtig ist -->
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 10v4"/>
-                            <path d="M10 12h4"/>
-                            <rect x="9" y="9" width="6" height="6" rx="1"/>
-                            <path d="M5 5l4 4"/>
-                            <path d="M19 5l-4 4"/>
-                            <path d="M5 19l4-4"/>
-                            <path d="M19 19l-4-4"/>
-                            <circle cx="4" cy="4" r="2"/>
-                            <circle cx="20" cy="4" r="2"/>
-                            <circle cx="4" cy="20" r="2"/>
-                            <circle cx="20" cy="20" r="2"/>
-                        </svg>
-                    </div>
-                    <div class="step-number-badge">3</div>
-                </div>
-                <div class="step-content">
-                    <h3>Drohnenflug & Fachgerechte Rettung</h3>
-                    <p>Mit der Wärmebilddrohne wird das Feld systematisch abgeflogen. Wird ein Kitz geortet, leitet der Pilot das Helferteam per Funk präzise zum Fundort.</p>
-                    <div class="warning-box">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <strong>Wichtig:</strong> Niemals auf eigene Faust ohne geschulte Helfer suchen! Kitze werden ausschließlich mit reichlich frischem Gras als Schutzschicht berührt, damit der Muttergeruch erhalten bleibt.
-                    </div>
-                </div>
+            <!-- UNTEN: CTA BUTTON -->
+            <div class="cta-container">
+                <a href="kontakt.html#kontakt" class="cta-button"><i class="fa-solid fa-calendar-check"></i> Wiese jetzt zur Mahd anmelden</a>
             </div>
 
-            <div class="step-card">
-                <div class="step-icon-wrapper">
-                    <div class="step-icon">
-                        <i class="fa-solid fa-tractor"></i>
-                    </div>
-                    <div class="step-number-badge">4</div>
-                </div>
-                <div class="step-content">
-                    <h3>Mahd & Freilassung</h3>
-                    <p>Nach der Freigabe kann der Landwirt die Wiese gefahrlos mähen. Im Anschluss lassen wir das Kitz in unmittelbarer Nähe im geschützten Dickicht wieder frei, wo es von der Ricke aufgenommen wird.</p>
-                </div>
-            </div>
         </div>
+
     </main>
+
+    <!-- LIGHTBOX OVERLAY -->
+    <div class="lightbox-modal" id="lightbox" onclick="closeLightbox(event)">
+        <span class="lightbox-close" onclick="forceCloseLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightboxImg" src="" alt="Vergrößertes Bild">
+        <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
 
     <footer>
         <p style="margin-bottom: 10px;">&copy; 2026 Rehkitzrettung Heuberg e.V. – Alle Rechte vorbehalten.</p>
@@ -400,8 +672,8 @@
         </p>
     </footer>
 
-    <!-- JavaScript für das mobile Menü und Overlay -->
     <script>
+        /* Mobile Nav Toggle */
         function toggleMenu() {
             const nav = document.getElementById('mobileNav');
             const overlay = document.getElementById('menuOverlay');
@@ -413,6 +685,37 @@
             document.getElementById('mobileNav').classList.remove('active');
             document.getElementById('menuOverlay').classList.remove('active');
         }
+
+        /* Lightbox Funktionen */
+        function openLightbox(imageSrc, captionText) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxCaption = document.getElementById('lightboxCaption');
+
+            lightboxImg.src = imageSrc;
+            lightboxCaption.innerText = captionText;
+
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(event) {
+            if (event.target.id === 'lightbox') {
+                forceCloseLightbox();
+            }
+        }
+
+        function forceCloseLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                forceCloseLightbox();
+            }
+        });
     </script>
 </body>
 </html>
