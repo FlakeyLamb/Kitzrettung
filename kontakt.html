@@ -212,6 +212,38 @@
             margin-bottom: 12px;
         }
 
+        /* Code-Styling für IBAN */
+        code {
+            font-family: monospace;
+            color: #4ade80;
+            font-size: 1.05rem;
+            font-weight: bold;
+        }
+
+        /* Download-Button für Mitgliedsantrag */
+        .download-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: #4ade80;
+            border: 2px solid #4ade80;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 10px 22px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .download-button:hover {
+            background: #4ade80;
+            color: #0d1a11;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+            transform: translateY(-2px);
+        }
+
         img, iframe, svg {
             max-width: 100%;
             height: auto;
@@ -336,6 +368,25 @@
                     <strong>E-Mail-Adresse:</strong><br>
                     <a href="mailto:kontakt@rehkitzrettung-heuberg.de">kontakt@rehkitzrettung-heuberg.de</a>
                 </div>
+            </div>
+
+            <!-- SPENDENKONTO (Kurze 2-Zeilen-Version wie auf Visitenkarten) -->
+            <div class="contact-item" style="margin-top: 15px;">
+                <div class="contact-icon">💳</div>
+                <div>
+                    <strong>Spendenkonto (IBAN):</strong><br>
+                    <code>DE12 3456 7890 1234 5678 90</code><br>
+                    <span style="font-size: 0.85rem; color: #94a3b8;">Rehkitzrettung Heuberg e.V. | Spendenbescheinigung auf Wunsch</span>
+                </div>
+            </div>
+
+            <!-- MITGLIEDSANTRAG DOWNLOAD BUTTON -->
+            <div style="margin-top: 25px; border-top: 1px solid rgba(74, 222, 128, 0.2); padding-top: 20px;">
+                <strong>Werde Mitglied bei uns:</strong><br>
+                <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 4px; margin-bottom: 10px;">Du möchtest uns als aktiver Helfer oder Förderer unterstützen?</p>
+                <a href="mitgliedsantrag.pdf" download="Mitgliedsantrag_Rehkitzrettung_Heuberg.pdf" class="download-button">
+                    📄 Mitgliedsantrag herunterladen (PDF)
+                </a>
             </div>
         </div>
 
