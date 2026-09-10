@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Über uns – Rehkitzrettung Heuberg e.V.</title>
+    <!-- FontAwesome CDN für Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -14,13 +16,13 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #12281a 0%, #1e3a27 50%, #102216 100%);
+            background: linear-gradient(135deg, #0e1e14 0%, #1a3523 50%, #0d1a11 100%);
             color: #f8fafc;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Animationen */
+        /* Animationen für Seitenaufbau */
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -30,11 +32,27 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Animation für den leuchtenden Rahmen */
+        @keyframes glowPulse {
+            0% {
+                border-color: rgba(74, 222, 128, 0.5);
+                box-shadow: 0 0 10px rgba(74, 222, 128, 0.2), inset 0 0 8px rgba(74, 222, 128, 0.1);
+            }
+            50% {
+                border-color: rgba(74, 222, 128, 0.9);
+                box-shadow: 0 0 20px rgba(74, 222, 128, 0.5), inset 0 0 12px rgba(74, 222, 128, 0.2);
+            }
+            100% {
+                border-color: rgba(74, 222, 128, 0.5);
+                box-shadow: 0 0 10px rgba(74, 222, 128, 0.2), inset 0 0 8px rgba(74, 222, 128, 0.1);
+            }
+        }
+
         /* --- Header & Navigation --- */
         header {
             width: 100%;
             padding: 15px 40px;
-            background: rgba(18, 40, 26, 0.85);
+            background: rgba(14, 30, 20, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(74, 222, 128, 0.3);
@@ -62,7 +80,7 @@
             text-decoration: none;
             font-size: 0.95rem;
             font-weight: 500;
-            transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: color 0.3s ease, transform 0.3s ease;
             display: inline-block;
         }
         nav ul li a:hover { 
@@ -70,7 +88,7 @@
             transform: translateY(-1px);
         }
 
-        /* Hamburger-Button für Mobilgeräte */
+        /* Mobile Menu */
         .menu-toggle {
             display: none;
             background: none;
@@ -81,14 +99,11 @@
             z-index: 1001;
         }
 
-        /* Overlay für den Bereich außerhalb des Menüs */
         .menu-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(3px);
             -webkit-backdrop-filter: blur(3px);
@@ -97,10 +112,7 @@
             transition: opacity 0.3s ease-in-out;
         }
 
-        .menu-overlay.active {
-            display: block;
-            opacity: 1;
-        }
+        .menu-overlay.active { display: block; opacity: 1; }
 
         /* --- Hauptbereich --- */
         .content-section {
@@ -111,75 +123,270 @@
         }
 
         .section-title {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: 800;
             color: #ffffff;
-            margin-bottom: 40px;
+            margin-bottom: 8px;
             text-align: center;
             letter-spacing: 0.5px;
         }
 
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 25px;
+        .section-subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-size: 1.05rem;
         }
 
-        .about-card {
-            background: rgba(30, 58, 39, 0.75);
+        /* Layout der Feature-Blöcke */
+        .feature-block {
+            background: rgba(30, 58, 39, 0.65);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(74, 222, 128, 0.35);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
 
-        .about-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(74, 222, 128, 0.65);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        .feature-block:hover {
+            transform: translateY(-4px);
+            border-color: #4ade80;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.25), 0 12px 30px rgba(0,0,0,0.4);
         }
 
-        .about-card h3 {
-            font-size: 1.3rem;
+        .feature-block.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .feature-content {
+            flex: 1;
+        }
+
+        .feature-content h3 {
+            font-size: 1.35rem;
             color: #ffffff;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .about-card p { font-size: 1rem; color: #cbd5e1; line-height: 1.6; }
-        
-        /* Motto-Karte */
-        .motto-card {
-            background: linear-gradient(135deg, rgba(22, 163, 74, 0.25), rgba(30, 58, 39, 0.9));
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(74, 222, 128, 0.5);
-            border-radius: 16px;
-            padding: 35px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        .feature-content h3 i {
+            color: #4ade80;
         }
 
-        .motto-card h3 {
-            font-size: 1.1rem;
+        .feature-content p {
+            font-size: 0.98rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        /* BILD-BOX MIT LEUCHTENDEM RAHMEN */
+        .image-box {
+            width: 280px;
+            height: 170px;
+            flex-shrink: 0;
+            border-radius: 14px;
+            border: 2px solid #4ade80;
+            background: rgba(74, 222, 128, 0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #4ade80;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            
+            animation: glowPulse 3s infinite ease-in-out;
+            transition: all 0.3s ease;
+        }
+
+        .image-box:hover {
+            animation: none;
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.2);
+            box-shadow: 0 0 25px rgba(74, 222, 128, 0.7), inset 0 0 15px rgba(74, 222, 128, 0.4);
+            transform: scale(1.03);
+        }
+
+        .image-box i {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .image-box span {
+            font-size: 0.8rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0; left: 0;
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .image-box:hover img {
+            transform: scale(1.05);
+        }
+
+        .image-box .zoom-icon {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-size: 1.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 2;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        .image-box:hover .zoom-icon {
+            opacity: 1;
+        }
+
+        /* --- Motto Banner --- */
+        .motto-banner {
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.3), rgba(16, 34, 22, 0.9));
+            border: 1px solid rgba(74, 222, 128, 0.5);
+            border-radius: 18px;
+            padding: 35px 25px;
+            text-align: center;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .motto-banner h3 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             color: #4ade80;
             margin-bottom: 10px;
         }
 
-        .motto-card p { font-size: 1.6rem; font-weight: 700; color: #ffffff; font-style: italic; }
+        .motto-banner p {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #ffffff;
+            font-style: italic;
+        }
+
+        /* --- LIGHTBOX (PASST SICH DEM BILD AN) --- */
+        .lightbox-modal {
+            display: flex;
+            visibility: hidden;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                        background 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                        backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                        visibility 0.4s ease;
+        }
+
+        .lightbox-modal.show {
+            visibility: visible;
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* DYNAMISCHER CONTAINER OHNE FESTES SEITENVERHÄLTNIS */
+        #lightboxContainer {
+            transform: scale(0.3);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 85vw;
+            max-height: 80vh;
+            position: relative;
+        }
+
+        .lightbox-modal.show #lightboxContainer {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Das Bild behält seine originalen Proportionen */
+        .lightbox-content {
+            max-width: 85vw;
+            max-height: 80vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 0 35px rgba(74, 222, 128, 0.6);
+            border: 2px solid #4ade80;
+            display: block;
+        }
+
+        /* Backup-Platzhalter falls kein Bild da ist */
+        .lightbox-placeholder {
+            width: 80vw;
+            max-width: 600px;
+            height: 350px;
+            background: #1a3523;
+            color: #4ade80;
+            border-radius: 16px;
+            border: 2px solid #4ade80;
+            box-shadow: 0 0 35px rgba(74, 222, 128, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .lightbox-placeholder i { font-size: 3rem; margin-bottom: 12px; }
+        .lightbox-placeholder h2 { color: #fff; margin-bottom: 8px; font-size: 1.4rem; }
+
+        .lightbox-close {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            color: #ffffff;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .lightbox-close:hover { 
+            color: #4ade80; 
+            transform: scale(1.1);
+        }
 
         /* --- Footer --- */
         footer {
             width: 100%;
-            background: rgba(18, 40, 26, 0.95);
+            background: rgba(14, 30, 20, 0.95);
             border-top: 1px solid rgba(74, 222, 128, 0.3);
             padding: 30px 20px;
             text-align: center;
@@ -188,69 +395,48 @@
             margin-top: 60px;
         }
 
-        footer a {
-            color: #4ade80;
-            text-decoration: none;
-            margin: 0 10px;
-            transition: color 0.3s ease;
-        }
-
+        footer a { color: #4ade80; text-decoration: none; margin: 0 10px; transition: color 0.3s ease; }
         footer a:hover { color: #ffffff; }
 
-        /* --- Responsive Off-Canvas Navigation --- */
-        @media (max-width: 768px) {
-            header {
-                padding: 15px 20px;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
+        /* Responsive */
+        @media (max-width: 800px) {
+            header { padding: 15px 20px; }
+            .menu-toggle { display: block; }
 
             nav {
                 position: fixed;
-                top: 0;
-                left: -260px;
-                width: 260px;
-                height: 100vh;
+                top: 0; left: -260px;
+                width: 260px; height: 100vh;
                 background: rgba(16, 34, 22, 0.98);
                 backdrop-filter: blur(15px);
-                -webkit-backdrop-filter: blur(15px);
                 border-right: 1px solid rgba(74, 222, 128, 0.3);
                 padding: 80px 20px 30px 20px;
                 transition: left 0.3s ease-in-out;
                 z-index: 1000;
             }
 
-            nav.active {
-                left: 0;
-            }
+            nav.active { left: 0; }
+            nav ul { flex-direction: column; gap: 20px; }
+            nav ul li a { font-size: 1.1rem; display: block; }
 
-            nav ul {
+            .feature-block, .feature-block.reverse {
                 flex-direction: column;
-                gap: 20px;
+                align-items: stretch;
             }
 
-            nav ul li a {
-                font-size: 1.1rem;
-                display: block;
-            }
-
-            .about-grid { 
-                grid-template-columns: 1fr; 
+            .image-box {
+                width: 100%;
+                height: 160px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Overlay für Klick außerhalb des Menüs -->
     <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 
     <header>
-        <!-- Mobil-Menü-Button -->
         <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-
         <div class="brand-name">Rehkitzrettung Heuberg e.V.</div>
         
         <nav id="mobileNav">
@@ -266,31 +452,71 @@
 
     <main class="content-section">
         <h1 class="section-title">Über uns</h1>
+        <p class="section-subtitle">Ehrenamtlicher Einsatz & Leidenschaft für den Wildtierschutz</p>
         
-        <div class="about-grid">
-            <div class="about-card">
-                <h3>🌱 Unsere Geschichte</h3>
+        <!-- BLOCK 1: GESCHICHTE -->
+        <div class="feature-block">
+            <div class="feature-content">
+                <h3><i class="fa-solid fa-seedling"></i> Unsere Geschichte</h3>
                 <p>Gegründet im Jahr 2022, setzen wir uns als Rehkitzrettung Heuberg e.V. mit vollem Einsatz für den Schutz von Wildtieren in unserer Region ein. Was als Initiative begann, ist heute fester Bestandteil einer tierschutzgerechten und modernen Landwirtschaft.</p>
             </div>
-
-            <div class="about-card">
-                <h3>🚁 Technik & Ausrüstung</h3>
-                <p>Ausgestattet mit drei professionellen Vereinsdrohnen inklusive Wärmebildtechnik spüren wir die gut getarnten Kitze früh morgens vor der Mahd auf, um sie vor dem sicheren Tod im hohen Gras zu bewahren.</p>
+            
+            <div class="image-box" onclick="openLightbox('Unsere Geschichte', '', 'DEIN-BILD-1.jpg')">
+                <img src="DEIN-BILD-1.jpg" alt="Vereinsgeschichte" onerror="this.style.display='none'">
+                <i class="fa-solid fa-expand zoom-icon"></i>
+                <i class="fa-solid fa-image"></i>
+                <span>Foto: Vereinsgeschichte</span>
+                <small style="font-size:0.65rem; opacity:0.8; margin-top:3px;">(Klicken zum Vergrößern)</small>
             </div>
         </div>
 
-        <div class="about-grid">
-            <div class="about-card" style="grid-column: 1 / -1;">
-                <h3>🤝 Ehrenamt & Finanzierung</h3>
-                <p>Unsere gesamte Arbeit basiert auf rein ehrenamtlichem Engagement und wird ausschließlich über Spenden finanziert. Nur so können wir unsere Einsätze für die Landwirte unkompliziert, zuverlässig und kostenfrei anbieten.</p>
-            </div>
-        </div>
-
-        <div class="motto-card">
+        <!-- Leitspruch Banner -->
+        <div class="motto-banner">
             <h3>Unser Leitspruch</h3>
             <p>„Essen, schlafen, Kitze retten, wiederholen.“</p>
         </div>
+
+        <!-- BLOCK 2: TECHNIK -->
+        <div class="feature-block reverse">
+            <div class="feature-content">
+                <h3><i class="fa-solid fa-plane-up"></i> Technik & Ausrüstung</h3>
+                <p>Ausgestattet mit drei professionellen Vereinsdrohnen inklusive Wärmebildtechnik spüren wir die gut getarnten Kitze früh morgens vor der Mahd auf, um sie vor dem sicheren Tod im hohen Gras zu bewahren.</p>
+            </div>
+            
+            <div class="image-box" onclick="openLightbox('Unsere Drohnentechnik', 'Einsatzbereit mit Wärmebild', 'DEIN-BILD-2.jpg')">
+                <img src="DEIN-BILD-2.jpg" alt="Drohnentechnik" onerror="this.style.display='none'">
+                <i class="fa-solid fa-expand zoom-icon"></i>
+                <i class="fa-solid fa-image"></i>
+                <span>Foto: Drohnen-Technik</span>
+                <small style="font-size:0.65rem; opacity:0.8; margin-top:3px;">(Klicken zum Vergrößern)</small>
+            </div>
+        </div>
+
+        <!-- BLOCK 3: EHRENAMT -->
+        <div class="feature-block">
+            <div class="feature-content">
+                <h3><i class="fa-solid fa-handshake-angle"></i> Ehrenamt & Finanzierung</h3>
+                <p>Unsere gesamte Arbeit basiert auf rein ehrenamtlichem Engagement und wird ausschließlich über Spenden financed. Nur so können wir unsere Einsätze für die Landwirte unkompliziert, zuverlässig und kostenfrei anbieten.</p>
+            </div>
+            
+            <div class="image-box" onclick="openLightbox('Unser Helfer-Team', '', 'DEIN-BILD-3.jpg')">
+                <img src="DEIN-BILD-3.jpg" alt="Helfer Team" onerror="this.style.display='none'">
+                <i class="fa-solid fa-expand zoom-icon"></i>
+                <i class="fa-solid fa-image"></i>
+                <span>Foto: Helfer-Team</span>
+                <small style="font-size:0.65rem; opacity:0.8; margin-top:3px;">(Klicken zum Vergrößern)</small>
+            </div>
+        </div>
+
     </main>
+
+    <!-- LIGHTBOX MODAL POPUP -->
+    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <div id="lightboxContainer">
+            <!-- Dynamischer Inhalt -->
+        </div>
+    </div>
 
     <footer>
         <p style="margin-bottom: 10px;">&copy; 2026 Rehkitzrettung Heuberg e.V. – Alle Rechte vorbehalten.</p>
@@ -302,6 +528,7 @@
     </footer>
 
     <script>
+        /* Mobile Nav Toggle */
         function toggleMenu() {
             const nav = document.getElementById('mobileNav');
             const overlay = document.getElementById('menuOverlay');
@@ -312,6 +539,41 @@
         function closeMenu() {
             document.getElementById('mobileNav').classList.remove('active');
             document.getElementById('menuOverlay').classList.remove('active');
+        }
+
+        /* Lightbox Logik mit automatischer Format-Anpassung */
+        function openLightbox(title, subtitle, imageSrc = null) {
+            const modal = document.getElementById('lightboxModal');
+            const container = document.getElementById('lightboxContainer');
+
+            if (imageSrc) {
+                const img = new Image();
+                img.src = imageSrc;
+                img.className = 'lightbox-content';
+                img.alt = title;
+
+                img.onload = function() {
+                    container.innerHTML = '';
+                    container.appendChild(img);
+                };
+
+                img.onerror = function() {
+                    container.innerHTML = `
+                        <div class="lightbox-placeholder">
+                            <i class="fa-solid fa-image"></i>
+                            <h2>${title}</h2>
+                            <p style="color:#cbd5e1;">Bilddatei <b>"${imageSrc}"</b> nicht gefunden.</p>
+                            <small style="margin-top:15px; display:block; opacity:0.7;">Bitte lege die Datei im selben Ordner wie diese HTML-Datei ab.</small>
+                        </div>
+                    `;
+                };
+            }
+
+            modal.classList.add('show');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxModal').classList.remove('show');
         }
     </script>
 </body>
